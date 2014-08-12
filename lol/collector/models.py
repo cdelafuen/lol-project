@@ -4,11 +4,21 @@ from django.db import models
 import requests
 
 
-# Create your models here.
+class BasicParameters(models.Model):
+    attack = models.PositiveSmallIntegerField()
+    magic = models.PositiveSmallIntegerField()
+    defense = models.PositiveSmallIntegerField()
+    difficulty = models.PositiveSmallIntegerField()
+
+    def __unicode__(self):
+        return self.pk
+
+
 class Champion(models.Model):
 
     champion_id = models.PositiveIntegerField(primary_key=True)
     name = models.CharField(max_length=45)
+    basic_parameters = models.ForeignKey(BasicParameters)
     sex = models.CharField(max_length=45, blank=True, null=True)
 
     def __unicode__(self):
@@ -58,5 +68,9 @@ def update_champions(self):
         champions = json.loads(response.content)
         for champion in champions['data']:
             print champions['data'][champion]
+            basic_params = champions['data'][champion]['info']
+            bp = BasicParameters.objects.create(attack=basic_params['attack'], defense=basic_params['defense'],
+                                                magic=basic_params['magic'], difficulty=basic_params['difficulty'])
             Champion.objects.get_or_create(champion_id=champions['data'][champion]['key'],
-                                           name=champions['data'][champion]['name'])
+                                           name=champions['data'][champion]['name'],
+                                           basic_parameters=bp)
