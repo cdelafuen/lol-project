@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     #'apps.collector',
-    'lol.laura',
+    'lol.collector',
 )
 
 MIDDLEWARE_CLASSES = (
