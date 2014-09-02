@@ -1,8 +1,10 @@
 from django.contrib import admin
 
 # Register your models here.
-from .models import Champion, BasicParameters
+from .models import Champion
 
 
-admin.site.register(Champion)
-admin.site.register(BasicParameters)
+class ChampionAdmin(admin.ModelAdmin):
+    list_display = ('champion_id', 'name', 'sex', 'partype')
+
+admin.site.register(Champion, ChampionAdmin)

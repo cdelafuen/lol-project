@@ -4,22 +4,15 @@ from django.db import models
 import requests
 
 
-class BasicParameters(models.Model):
+class Champion(models.Model):
+    champion_id = models.PositiveIntegerField(primary_key=True)
+    name = models.CharField(max_length=45)
     attack = models.PositiveSmallIntegerField()
     magic = models.PositiveSmallIntegerField()
     defense = models.PositiveSmallIntegerField()
     difficulty = models.PositiveSmallIntegerField()
-
-    def __unicode__(self):
-        return self.pk
-
-
-class Champion(models.Model):
-
-    champion_id = models.PositiveIntegerField(primary_key=True)
-    name = models.CharField(max_length=45)
-    basic_parameters = models.ForeignKey(BasicParameters)
-    sex = models.CharField(max_length=45, blank=True, null=True)
+    sex = models.CharField(max_length=45)
+    partype = models.CharField(max_length=45)
 
     def __unicode__(self):
         return self.name
@@ -61,7 +54,7 @@ class Api(models.Model):
     server = models.CharField(max_length=5, choices=SERVER_CHOICES, default=EUW)
 
 
-def update_champions(self):
+def update_champions():
     # request
     response = requests.get("http://ddragon.leagueoflegends.com/cdn/4.4.3/data/es_ES/champion.json")
     if response.status_code == 200:
@@ -69,8 +62,8 @@ def update_champions(self):
         for champion in champions['data']:
             print champions['data'][champion]
             basic_params = champions['data'][champion]['info']
-            bp = BasicParameters.objects.create(attack=basic_params['attack'], defense=basic_params['defense'],
-                                                magic=basic_params['magic'], difficulty=basic_params['difficulty'])
             Champion.objects.get_or_create(champion_id=champions['data'][champion]['key'],
                                            name=champions['data'][champion]['name'],
-                                           basic_parameters=bp)
+                                           attack=basic_params['attack'], defense=basic_params['defense'],
+                                           magic=basic_params['magic'], difficulty=basic_params['difficulty'],
+                                           partype=champions['data'][champion]['partype'])
