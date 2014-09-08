@@ -20,7 +20,8 @@ class Champion(models.Model):
     difficulty = models.PositiveSmallIntegerField()
     sex = models.CharField(max_length=45)
     partype = models.CharField(max_length=45)
-    fighting_types = models.ManyToManyField(FightingType, through='ChampionFightingType', blank=True, null=True)
+    fighting_types = models.ManyToManyField(FightingType, through='ChampionFightingType', blank=True, null=True,
+                                            related_name='fighting_types')
 
     def __unicode__(self):
         return self.name
@@ -84,3 +85,10 @@ def update_champions():
                 ft, created = FightingType.objects.get_or_create(type=type)
                 ChampionFightingType.objects.get_or_create(champion=c, fighting_type=ft)
                 print c, type, ft, created
+
+
+def get_champions_by_fighting_type(type, queryset=None):
+    if queryset:
+        return queryset.filter(fighting_types=type)
+    else:
+        return Champion.objects.filter(fighting_types=type)

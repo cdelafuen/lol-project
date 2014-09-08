@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+    {% for champion in champions %}
+        <p>{{ champion }}</p>
+    {% empty %}
+        No champions with that specifications
+    {% endfor %}
+</body>
+</html>
